@@ -15,15 +15,15 @@ public class GazeTracker {
     /**
      * Количество нейронов входного слоя = 240 * 320
      */
-    public static int INPUT_NEURONS = 480 * 640;
+    public static int INPUT_NEURONS = 320 * 480;
     /**
      * Количество нейронов скрытого слоя X = 384. 
      */
-    public static int HIDDEN_NEURONSX = 500;
+    public static int HIDDEN_NEURONSX = 700;
     /**
      * Количество нейронов скрытого слоя Y = 384. 
      */
-    public static int HIDDEN_NEURONSY = 500;
+    public static int HIDDEN_NEURONSY = 700;
     /**
      * Количество нейронов выходного слоя X значения. 1 нейрон
      */
@@ -85,7 +85,7 @@ public class GazeTracker {
 
     // Глобальные переменные
     public static int count = 1;
-    public static float initialLearningRate = 0.0012f;
+    public static float initialLearningRate = 0.000012f;
     /**
      * Speed of learning of NN. Can be adapting for optimizing education. Define value is 0.015
      */
@@ -94,7 +94,7 @@ public class GazeTracker {
     /**
      * Path to save wiegths
      */
-    static String filename = "C:\\Users\\user\\Desktop\\NeuralNetwork\\MyAI5\\weights.txt";
+    static String filename = "C:\\Users\\user\\Desktop\\GazeTracker\\weights.txt";
     public static Random rand = new Random();
     public static boolean isTested = true; 
     public static boolean flagX = true;
@@ -120,8 +120,8 @@ public class GazeTracker {
      */
     public static float lambda = 0.001f;
     public float lossAverage = 0;
-    public float alpha = 0.1f; // коэффициент для скользящего среднего
-    public static float beta = 0.001f; // коэффициент для изменения скорости обучения
+    public float alpha = 0.01f; // коэффициент для скользящего среднего
+    public static float beta = 0.01f; // коэффициент для изменения скорости обучения
     public static String DATASET = "C:\\Users\\user\\Desktop\\batch";
     public static String DATASET_1 = "C:\\Users\\user\\Desktop\\dataset1";
     public static String EXECUTE = "C:\\Users\\user\\Desktop\\execute";
@@ -233,7 +233,7 @@ public class GazeTracker {
     // Основная функция для тестирования
     public static void main(String[] args) throws IOException {
 
-        network.saveAndLoadNN.loadWeights(filename);
+        saveAndLoadNN.loadWeights(filename);
 
         if(isTested){
             System.out.println("Hello, I'm in main method...");
@@ -253,7 +253,7 @@ public class GazeTracker {
             if (file.isFile()) {
                 // Тестовое RGB изображение (здесь должен быть ваш одномерныйefh,../;
                 BufferedImage originalImage = ImageIO.read(file);
-                grayImage = ImageProcessor.convertToNormalizedArray(originalImage, 480, 640);
+                grayImage = ImageProcessor.convertToNormalizedArray(originalImage, 320, 480);
 
                 fileName = file.getName();
                 fileName = fileName.replace("files_", ""); // Удаление "files_"
@@ -270,21 +270,21 @@ public class GazeTracker {
                 
                 if(isTested & count % 400 == 0){
                     System.out.println("Save weights to file after " + count + " learning iterations...");
-                    network.saveAndLoadNN.saveWeights(filename, network);
+                    saveAndLoadNN.saveWeights(filename, network);
                     System.out.println("Save is succesfull!");
                 }
                 count++;
                 
             }
         }
-        network.saveAndLoadNN.saveWeights(filename, network);
+        saveAndLoadNN.saveWeights(filename, network);
 
     }
 
     // Метод обратного распространения ошибки
     public void backpropagation(float[] grayImage, float expectedX, float expectedY) {
 
-        //tempWeightsSaver();
+        // tempWeightsSaver();
         float predictedX = outputLayerX[0];
         float predictedY = outputLayerY[0];
         float actualX = expectedX / 1080;
@@ -534,7 +534,7 @@ public class GazeTracker {
 
     public static void GetLearningRateSpeedX(float predictedX, float actualX, float lossX){
 
-        if (lossX > (float)mseLossX(predictedX, actualX)) {
+        if (lossX <= (float)mseLossX(predictedX, actualX)) {
             // Увеличиваем скорость обучения только за счет значения функции потерь
             learningRateX += beta * learningRateX;
         } else if(lossX <= 0.001 & learningRateX - lossX > 0) {
@@ -548,7 +548,7 @@ public class GazeTracker {
 
     public static void GetLearningRateSpeedY(float predictedY, float actualY, float lossY){
 
-        if (lossY > (float)mseLossY(predictedY, actualY)) {
+        if (lossY <= (float)mseLossY(predictedY, actualY)) {
             // Увеличиваем скорость обучения только за счет значения функции потерь
             learningRateY += beta * learningRateY;
         } else if (lossY <= 0.001 & learningRateY - lossY > 0){
@@ -568,7 +568,7 @@ public class GazeTracker {
             System.out.println("NN says that x is " + network.getXCoordinate(SCREEN_WIDTH) + ", but the x is " + x);
             System.out.println("NN says that y is " + network.getYCoordinate(SCREEN_HEIGTH) + ", but the y is " + y);
             System.out.println("Learning Rate for X is: " + learningRateX + ", and Loss for X is: " + lossX);
-            System.out.println("Learning Rate for Y is: " + learningRateY + ", and Loss for X is: " + lossY);
+            System.out.println("Learning Rate for Y is: " + learningRateY + ", and Loss for Y is: " + lossY);
         }
     }
 }
