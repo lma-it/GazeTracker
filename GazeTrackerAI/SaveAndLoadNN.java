@@ -17,7 +17,7 @@ public class SaveAndLoadNN {
     public void saveWeights(String filename, GazeTracker network) {
         try (PrintWriter out = new PrintWriter(new FileWriter(filename))) {
             // Сохранение весов от входного к скрытому слою X
-            System.out.println("Save to file weights.txt input-hidden weigths");
+            System.out.println("Save to file weights.txt input-hidden weights");
             for (float[] layer : gTracker.inputToHiddenWeightsX) {
                 for (float weight : layer) {
                     out.print(weight + " ");
@@ -26,7 +26,7 @@ public class SaveAndLoadNN {
             }
 
             // Сохранение весов от входного к скрытому слою Y
-            System.out.println("Save to file weights.txt input-hidden weigths");
+            System.out.println("Save to file weights.txt input-hidden weights");
             for (float[] layer : gTracker.inputToHiddenWeightsY) {
                 for (float weight : layer) {
                     out.print(weight + " ");
@@ -35,7 +35,7 @@ public class SaveAndLoadNN {
             }
 
             // Сохранение весов для X от скрытого к выходному слою 
-            System.out.println("Save to file weights.txt hidden-output X weigths");
+            System.out.println("Save to file weights.txt hidden-output X weights");
             for (float[] layer : gTracker.hiddenToOutputWeightsX) {
                 for (float weight : layer) {
                     out.print(weight + " ");
@@ -44,7 +44,7 @@ public class SaveAndLoadNN {
             }
 
             // Сохранение весов для Y от скрытого к выходному слою 
-            System.out.println("Save to file weights.txt hidden-output Y weigths");
+            System.out.println("Save to file weights.txt hidden-output Y weights");
             for (float[] layer : gTracker.hiddenToOutputWeightsY) {
                 for (float weight : layer) {
                     out.print(weight + " ");
@@ -66,7 +66,7 @@ public class SaveAndLoadNN {
                 String line;
                 int i = 0;
                 // Загрузка весов от входного к скрытому слою
-                System.out.println("Read from file weights.txt input-hidden X weigths");
+                System.out.println("Read from file weights.txt input-hidden X weights");
                 while ((line = br.readLine()) != null && i < gTracker.inputToHiddenWeightsX.length) {
                     String[] weights = line.trim().split("\\s+");
                     for (int j = 0; j < weights.length; j++) {
@@ -76,7 +76,7 @@ public class SaveAndLoadNN {
                 }
                 i = 0;
                 // Загрузка весов от входного к скрытому слою
-                System.out.println("Read from file weights.txt input-hidden Y weigths");
+                System.out.println("Read from file weights.txt input-hidden Y weights");
                 while ((line = br.readLine()) != null && i < gTracker.inputToHiddenWeightsY.length) {
                     String[] weights = line.trim().split("\\s+");
                     for (int j = 0; j < weights.length; j++) {
@@ -86,7 +86,7 @@ public class SaveAndLoadNN {
                 }
                 i = 0;
                 // Загрузка весов для X от скрытого к выходному слою
-                System.out.println("Read from file weights.txt hidden-output X weigths");
+                System.out.println("Read from file weights.txt hidden-output X weights");
                 while ((line = br.readLine()) != null && i < gTracker.hiddenToOutputWeightsX.length) {
                     String[] weights = line.trim().split("\\s+");
                     for (int j = 0; j < weights.length; j++) {
@@ -95,7 +95,7 @@ public class SaveAndLoadNN {
                     i++;
                 }
                 // Загрузка весов для Y от скрытого к выходному слою
-                System.out.println("Read from file weights.txt hidden-output Y weigths");
+                System.out.println("Read from file weights.txt hidden-output Y weights");
                 while ((line = br.readLine()) != null && i < gTracker.hiddenToOutputWeightsY.length) {
                     String[] weights = line.trim().split("\\s+");
                     for (int j = 0; j < weights.length; j++) {
