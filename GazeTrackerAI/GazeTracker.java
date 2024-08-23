@@ -19,11 +19,11 @@ public class GazeTracker {
     /**
      * Количество нейронов скрытого слоя X = 384. 
      */
-    public static int HIDDEN_NEURONSX = 700;
+    public static int HIDDEN_NEURONSX = 300;
     /**
      * Количество нейронов скрытого слоя Y = 384. 
      */
-    public static int HIDDEN_NEURONSY = 700;
+    public static int HIDDEN_NEURONSY = 300;
     /**
      * Количество нейронов выходного слоя X значения. 1 нейрон
      */
@@ -85,7 +85,7 @@ public class GazeTracker {
 
     // Глобальные переменные
     public static int count = 1;
-    public static float initialLearningRate = 0.000012f;
+    public static float initialLearningRate = 0.000000001f;
     /**
      * Speed of learning of NN. Can be adapting for optimizing education. Define value is 0.015
      */
@@ -105,7 +105,7 @@ public class GazeTracker {
     // public AdamOptimizer optimizerHiddenToInputY = new AdamOptimizer(INPUT_NEURONS, INPUT_NEURONS, 0.9f, 0.999f, 4e-8f);
     public static float x;
     public static float y;
-    public static float errorX, errorY;
+    public static float errorX, errorY, newErrorX, newErrorY;
     public static float[] grayImage;
     public static int width = 1080;
     public static int height = 2200;
@@ -118,15 +118,17 @@ public class GazeTracker {
     /**
      * lambda for L1 and L2 regularization algorithms. Value is 0.01
      */
-    public static float lambda = 0.001f;
+    public static float lambdaL1 = 1e-5f;
+    public static float lambdaL2 = 1e-4f;
     public float lossAverage = 0;
     public float alpha = 0.01f; // коэффициент для скользящего среднего
-    public static float beta = 0.01f; // коэффициент для изменения скорости обучения
+    public static float beta = 0.0001f; // коэффициент для изменения скорости обучения
     public static String DATASET = "C:\\Users\\user\\Desktop\\batch";
     public static String DATASET_1 = "C:\\Users\\user\\Desktop\\dataset1";
     public static String EXECUTE = "C:\\Users\\user\\Desktop\\execute";
     public static int backproploops = 0;
     public static String fileName;
+    public boolean backprop = false;
 
     public static GazeTracker network = new GazeTracker();
     public static SaveAndLoadNN saveAndLoadNN = new SaveAndLoadNN(network);
@@ -291,6 +293,7 @@ public class GazeTracker {
         float actualY = expectedY / 2200;
         lossX = mseLossX(predictedX, actualX);
         lossY = mseLossY(predictedY, actualY);
+        backprop = false;
         if(isTested & count % 10 == 0){
             printTestResults("value before backpropogagion: ", lossX, lossY);
         }
@@ -368,12 +371,15 @@ public class GazeTracker {
         network.feedForward(grayImage);
         float newPredictedX = outputLayerX[0];
         float newPredictedY = outputLayerY[0];
+        newErrorX = outputLayerX[0] - expectedX / 1080;
+        newErrorY = outputLayerY[0] - expectedY / 2200;
         GetLearningRateSpeedX(newPredictedX, actualX, lossX);
         GetLearningRateSpeedY(newPredictedY, actualY, lossY);
         
         if(isTested & count % 10 == 0){
             newLossX = mseLossX(newPredictedX, actualX);
             newLossY = mseLossY(newPredictedY, actualY);
+            backprop = true;
             printTestResults("Values after backpropogation: ", newLossX, newLossY);
         }
 
@@ -524,20 +530,20 @@ public class GazeTracker {
 
     // L1 регуляризация
     public static float l1Regularization(float weight) {
-        return lambda * Math.signum(weight);
+        return lambdaL1 * Math.signum(weight);
     }
 
     // L2 регуляризация
     public static float l2Regularization(float weight) {
-        return lambda * weight;
+        return lambdaL2 * weight;
     }
 
     public static void GetLearningRateSpeedX(float predictedX, float actualX, float lossX){
 
-        if (lossX <= (float)mseLossX(predictedX, actualX)) {
+        if (lossX <= (float)mseLossX(predictedX, actualX) || (lossX <= (float)mseLossX(predictedX, actualX) && errorX - newErrorX >=0.001f)) {
             // Увеличиваем скорость обучения только за счет значения функции потерь
             learningRateX += beta * learningRateX;
-        } else if(lossX <= 0.001 & learningRateX - lossX > 0) {
+        } else if(lossX <= 0.001 && learningRateX - lossX > 0) {
             // Уменьшаем скорость обучения
             learningRateX -= lossX;
         }else{
@@ -548,10 +554,10 @@ public class GazeTracker {
 
     public static void GetLearningRateSpeedY(float predictedY, float actualY, float lossY){
 
-        if (lossY <= (float)mseLossY(predictedY, actualY)) {
+        if (lossY <= (float)mseLossY(predictedY, actualY) || (lossY <= (float)mseLossY(predictedY, actualY) && errorY - newErrorY >=0.001f)) {
             // Увеличиваем скорость обучения только за счет значения функции потерь
             learningRateY += beta * learningRateY;
-        } else if (lossY <= 0.001 & learningRateY - lossY > 0){
+        } else if (lossY <= 0.001 && learningRateY - lossY > 0){
             // Уменьшаем скорость обучения
             learningRateY -= lossY;
         }else{
@@ -565,8 +571,16 @@ public class GazeTracker {
             System.out.println(message);
             System.out.println(" The value of outputLayerX is " + outputLayerX[0]);
             System.out.println(" The value of outputLayerY is " + outputLayerY[0]);
+            if(backprop == false){
+                System.out.println("Error for X is: " + errorX);
+                System.out.println("Error for Y is: " + errorY);
+            }
             System.out.println("NN says that x is " + network.getXCoordinate(SCREEN_WIDTH) + ", but the x is " + x);
             System.out.println("NN says that y is " + network.getYCoordinate(SCREEN_HEIGTH) + ", but the y is " + y);
+            if(backprop){
+                System.out.println("Error after backpropogation for X is: " + newErrorX);
+                System.out.println("Error after backpropogation for Y is: " + newErrorY);
+            }
             System.out.println("Learning Rate for X is: " + learningRateX + ", and Loss for X is: " + lossX);
             System.out.println("Learning Rate for Y is: " + learningRateY + ", and Loss for Y is: " + lossY);
         }
