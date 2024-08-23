@@ -183,9 +183,7 @@ public class GazeTracker {
     public void feedForward(float[] grayImage) {
         
         // Преобразование RGB изображения в одномерный массив
-        for (int i = 0; i <grayImage.length; i++) {
-            inputLayer[i] = grayImage[i];
-        }
+        System.arraycopy(grayImage, 0, inputLayer, 0, grayImage.length);
 
         // Вычисление значений скрытого слоя
         for (int i = 0; i < HIDDEN_NEURONSX; i++) {
@@ -250,6 +248,7 @@ public class GazeTracker {
             System.out.println("I start to prepare data, and learn NN...");
         }
 
+        assert listOfFiles != null;
         for (File file : listOfFiles) {
             
             if (file.isFile()) {
@@ -458,27 +457,23 @@ public class GazeTracker {
         tempOutputY[0] = outputLayerY[0];
 
         for(int i = 0; i < HIDDEN_NEURONSX; i++){
-            for(int j = 0; j < OUTPUT_NEURONSX; j++){
-                tempHiddenToOutputX[i][j] = hiddenToOutputWeightsX[i][j];
-            }
+            if (OUTPUT_NEURONSX >= 0)
+                System.arraycopy(hiddenToOutputWeightsX[i], 0, tempHiddenToOutputX[i], 0, OUTPUT_NEURONSX);
         }
 
         for(int i = 0; i < HIDDEN_NEURONSY; i++){
-            for(int j = 0; j < OUTPUT_NEURONSY; j++){
-                tempHiddenToOutputY[i][j] = hiddenToOutputWeightsY[i][j];
-            }
+            if (OUTPUT_NEURONSY >= 0)
+                System.arraycopy(hiddenToOutputWeightsY[i], 0, tempHiddenToOutputY[i], 0, OUTPUT_NEURONSY);
         }
 
         for (int i = 0; i < INPUT_NEURONS; i++){
-            for (int j = 0; j < HIDDEN_NEURONSX; j++){
-                tempInputToHiddenXWeights[i][j] = inputToHiddenWeightsX[i][j];
-            }
+            if (HIDDEN_NEURONSX >= 0)
+                System.arraycopy(inputToHiddenWeightsX[i], 0, tempInputToHiddenXWeights[i], 0, HIDDEN_NEURONSX);
         }
 
         for (int i = 0; i < INPUT_NEURONS; i++){
-            for (int j = 0; j < HIDDEN_NEURONSY; j++){
-                tempInputToHiddenYWeights[i][j] = inputToHiddenWeightsY[i][j];
-            }
+            if (HIDDEN_NEURONSY >= 0)
+                System.arraycopy(inputToHiddenWeightsY[i], 0, tempInputToHiddenYWeights[i], 0, HIDDEN_NEURONSY);
         }
 
     }
@@ -489,27 +484,23 @@ public class GazeTracker {
         outputLayerY[0] = tempOutputY[0];
 
         for(int i = 0; i < HIDDEN_NEURONSX; i++){
-            for(int j = 0; j < OUTPUT_NEURONSX; j++){
-                hiddenToOutputWeightsX[i][j] = tempHiddenToOutputX[i][j];
-            }
+            if (OUTPUT_NEURONSX >= 0)
+                System.arraycopy(tempHiddenToOutputX[i], 0, hiddenToOutputWeightsX[i], 0, OUTPUT_NEURONSX);
         }
 
         for(int i = 0; i < HIDDEN_NEURONSY; i++){
-            for(int j = 0; j < OUTPUT_NEURONSY; j++){
-                hiddenToOutputWeightsY[i][j] = tempHiddenToOutputY[i][j];
-            }
+            if (OUTPUT_NEURONSY >= 0)
+                System.arraycopy(tempHiddenToOutputY[i], 0, hiddenToOutputWeightsY[i], 0, OUTPUT_NEURONSY);
         }
 
         for (int i = 0; i < INPUT_NEURONS; i++){
-            for (int j = 0; j < HIDDEN_NEURONSX; j++){
-                inputToHiddenWeightsX[i][j] = tempInputToHiddenXWeights[i][j];
-            }
+            if (HIDDEN_NEURONSX >= 0)
+                System.arraycopy(tempInputToHiddenXWeights[i], 0, inputToHiddenWeightsX[i], 0, HIDDEN_NEURONSX);
         }
 
         for (int i = 0; i < INPUT_NEURONS; i++){
-            for (int j = 0; j < HIDDEN_NEURONSY; j++){
-                inputToHiddenWeightsY[i][j] = tempInputToHiddenYWeights[i][j];
-            }
+            if (HIDDEN_NEURONSY >= 0)
+                System.arraycopy(tempInputToHiddenYWeights[i], 0, inputToHiddenWeightsY[i], 0, HIDDEN_NEURONSY);
         }
     }
 

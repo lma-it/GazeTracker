@@ -22,7 +22,7 @@ public class ImageProcessor {
                 int r = (rgb >> 16) & 0xFF;
                 int g = (rgb >> 8) & 0xFF;
                 int b = rgb & 0xFF;
-                float grayLevel = (r + g + b) / 3;
+                float grayLevel = (float) (r + g + b) / 3;
 
                 normalizedArray[i * targetWidth + j] = (float) (grayLevel / 255.0);
             }

@@ -1,9 +1,9 @@
 public class AdamOptimizer {
-    private float beta1;
-    private float beta2;
-    private float epsilon;
-    private float[][] m;
-    private float[][] v;
+    private final float beta1;
+    private final float beta2;
+    private final float epsilon;
+    private final float[][] m;
+    private final float[][] v;
     
 
     public AdamOptimizer(int numRows, int numCols, float beta1, float beta2, float epsilon) {
@@ -26,11 +26,11 @@ public class AdamOptimizer {
                 if(GazeTracker.flagX){
                     //params[i][j] -= GazeTracker.learningRateX * mHat / (Math.sqrt(vHat) + epsilon);
                     float regularizedGrad = grads[j] + GazeTracker.l1Regularization(params[i][j]) + GazeTracker.l2Regularization(params[i][j]);
-                    params[i][j] -= GazeTracker.learningRateX * mHat / (Math.sqrt(vHat) + epsilon) + regularizedGrad;
+                    params[i][j] -= (float) (GazeTracker.learningRateX * mHat / (Math.sqrt(vHat) + epsilon) + regularizedGrad);
                 }else if(GazeTracker.flagY){
                     //params[i][j] -= GazeTracker.learningRateX * mHat / (Math.sqrt(vHat) + epsilon);
                     float regularizedGrad = grads[j] + GazeTracker.l1Regularization(params[i][j]) + GazeTracker.l2Regularization(params[i][j]);
-                    params[i][j] -= GazeTracker.learningRateY * mHat / (Math.sqrt(vHat) + epsilon) + regularizedGrad;
+                    params[i][j] -= (float) (GazeTracker.learningRateY * mHat / (Math.sqrt(vHat) + epsilon) + regularizedGrad);
                 }
             }
         }
@@ -49,12 +49,12 @@ public class AdamOptimizer {
                     //params[i][j] -= GazeTracker.learningRateX * mHat / (Math.sqrt(vHat) + epsilon);
                     // params[i][j] -= GazeTracker.learningRateX * mHat / (Math.sqrt(vHat) + epsilon) + GazeTracker.l1Regularization(params[i][j]) + GazeTracker.l2Regularization(params[i][j]);
                     float regularizedGrad = grads[j] + GazeTracker.l1Regularization(params[i][j]) + GazeTracker.l2Regularization(params[i][j]);
-                    params[i][j] -= GazeTracker.learningRateX * mHat / (Math.sqrt(vHat) + epsilon) + regularizedGrad;
+                    params[i][j] -= (float) (GazeTracker.learningRateX * mHat / (Math.sqrt(vHat) + epsilon) + regularizedGrad);
                 }else if(GazeTracker.flagY){
                     //params[i][j] -= GazeTracker.learningRateX * mHat / (Math.sqrt(vHat) + epsilon);
                     // params[i][j] -= GazeTracker.learningRateY * mHat / (Math.sqrt(vHat) + epsilon) + GazeTracker.l1Regularization(params[i][j]) + GazeTracker.l2Regularization(params[i][j]);
                     float regularizedGrad = grads[j] + GazeTracker.l1Regularization(params[i][j]) + GazeTracker.l2Regularization(params[i][j]);
-                    params[i][j] -= GazeTracker.learningRateY * mHat / (Math.sqrt(vHat) + epsilon) + regularizedGrad;
+                    params[i][j] -= (float) (GazeTracker.learningRateY * mHat / (Math.sqrt(vHat) + epsilon) + regularizedGrad);
                 }
             }
         }
